@@ -3,14 +3,17 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { ShortenUrlService } from "./services/shortUrlService";
 import type { ShortUrlResponse } from "./types/ShortUrlResponse";
-
+import { Toaster } from "@/components/ui/sonner";
+import { useToast } from "./customhooks/useToast";
 
 function App() {
   const [url, setUrl] = useState("");
   const [shortenUrl, setshortenUrl] = useState<ShortUrlResponse>();
+  const { showInfoToast } = useToast();
 
   const handleShortenUrl = async () => {
     if (!url.trim()) {
+      showInfoToast("Please enter a URL to shorten.");
       return;
     }
 
@@ -24,6 +27,7 @@ function App() {
 
   return (
     <div className="flex min-h-svh flex-col items-center justify-center bg-black">
+      <Toaster richColors  className="text-grey  "/>
       <div className="flex w-full max-w-md flex-col items-center justify-center gap-4 p-4">
         <h1 className="text-2xl font-bold text-white">URL Shortener</h1>
         <label className="text-white w-full text-left text-sm">
@@ -55,9 +59,13 @@ function App() {
               className="w-full text-white"
             />
 
-            <Button className="w-full bg-green-500 hover:bg-green-600 text-white">
+            <Button
+              className="w-full bg-green-500 hover:bg-green-600 text-white"
+              onClick={() => {}}
+            >
               Copiar
             </Button>
+
           </>
         )}
       </div>
