@@ -9,7 +9,7 @@ import { useToast } from "./customhooks/useToast";
 function App() {
   const [url, setUrl] = useState("");
   const [shortenUrl, setshortenUrl] = useState<ShortUrlResponse>();
-  const { showInfoToast } = useToast();
+  const { showInfoToast, showSuccessToast } = useToast();
 
   const handleShortenUrl = async () => {
     if (!url.trim()) {
@@ -20,6 +20,7 @@ function App() {
     try {
       const response = await ShortenUrlService.shortUrlRequest({ url });
       setshortenUrl(response);
+      showSuccessToast("URL shortened successfully!");
     } catch (error) {
       console.error("Error shortening URL:", error);
     }
@@ -27,7 +28,7 @@ function App() {
 
   return (
     <div className="flex min-h-svh flex-col items-center justify-center bg-black">
-      <Toaster richColors  className="text-grey  "/>
+      <Toaster richColors className="text-grey  " />
       <div className="flex w-full max-w-md flex-col items-center justify-center gap-4 p-4">
         <h1 className="text-2xl font-bold text-white">URL Shortener</h1>
         <label className="text-white w-full text-left text-sm">
@@ -61,11 +62,15 @@ function App() {
 
             <Button
               className="w-full bg-green-500 hover:bg-green-600 text-white"
-              onClick={() => {}}
+              onClick={() => {
+                if (shortenUrl?.shortened_url) {
+                  navigator.clipboard.writeText(shortenUrl.shortened_url);
+                  showSuccessToast("URL copied to clipboard!");
+                }
+              }}
             >
               Copiar
             </Button>
-
           </>
         )}
       </div>
