@@ -1,7 +1,6 @@
-// TODO:ADD type DTO for the response
 import type { ShortUrlResponse } from "@/types/ShortUrlResponse";
 
-type fooRequestDTO = {
+export type fooRequestDTO = {
   url: string
   expires_in?: string
   expires?: boolean
@@ -11,7 +10,7 @@ type fooRequestDTO = {
 
 export async function shortUrlRequest(fooRequestDTO:fooRequestDTO): Promise<ShortUrlResponse> {
   try {
-    const response = await fetch("http://192.168.0.27:8070/api/create-url", {
+    const response = await fetch("http://192.168.0.27:8073/api/create-url", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
