@@ -1,24 +1,29 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { ShortenUrlService } from "./services/shortUrlService";
+import {
+  ShortenUrlService,
+  type fooRequestDTO,
+} from "./services/shortUrlService";
 import type { ShortUrlResponse } from "./types/ShortUrlResponse";
 import { Toaster } from "@/components/ui/sonner";
 import { useToast } from "./customhooks/useToast";
 
 function App() {
-  const [url, setUrl] = useState("");
+  const [payload, setPayload] = useState<fooRequestDTO>();
   const [shortenUrl, setshortenUrl] = useState<ShortUrlResponse>();
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const { showInfoToast, showSuccessToast } = useToast();
 
   const handleShortenUrl = async () => {
-    if (!url.trim()) {
+    if (!payload?.url.trim()) {
       showInfoToast("Please enter a URL to shorten.");
+
       return;
     }
 
     try {
-      const response = await ShortenUrlService.shortUrlRequest({ url });
+      const response = await ShortenUrlService.shortUrlRequest(payload);
       setshortenUrl(response);
       showSuccessToast("URL shortened successfully!");
     } catch (error) {
@@ -39,8 +44,8 @@ function App() {
           type="text"
           placeholder=""
           className="w-full colors-gray-700 text-white placeholder:text-gray-400 focus:ring-blue-500 focus:border-blue-500"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
+          value={payload?.url}
+          onChange={(e) => setPayload({ url: e.target.value })}
         />
         <Button
           className="w-full bg-gray-700 text-white py-2 rounded hover:bg-blue-600"
@@ -48,6 +53,72 @@ function App() {
         >
           Shorten
         </Button>
+        <div className="flex flex-col gap-4 w-full">
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="expires"
+              className="text-white"
+              onChange={() => setShowDatePicker(!showDatePicker)}
+            />
+
+            <label htmlFor="expires" className="text-white text-sm">
+              Expira
+            </label>
+          </div>
+
+          {showDatePicker && (
+            <Input
+              type="date"
+              placeholder="mm / dd / yyyy"
+              className="w-full text-white placeholder:text-gray-400 focus:ring-blue-500 focus:border-blue-500"
+              onChange={(e) => console.log(e.target.value)}
+            />
+          )}
+
+          <div className="flex flex-col gap-2">
+            <label className="text-white text-sm">Redirecionamento:</label>
+            <div className="flex items-center gap-2">
+              <input
+                type="radio"
+                id="permanent"
+                name="redirectType"
+                value="permanent"
+                className="text-white"
+                onChange={(e) =>
+                  setPayload((prev) => ({
+                    ...prev,
+                    url: prev?.url || "",
+                    redirect_type: e.target.value,
+                  }))
+                }
+              />
+              <label htmlFor="permanent" className="text-white text-sm">
+                Redirecionamento Permanente (301)
+              </label>
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="radio"
+                id="temporary"
+                name="redirectType"
+                value="temporary"
+                className="text-white"
+                onChange={(e) =>
+                  setPayload((prev) => ({
+                    ...prev,
+                    url: prev?.url || "",
+                    redirect_type: e.target.value,
+                  }))
+                }
+              />
+              <label htmlFor="temporary" className="text-white text-sm">
+                Redirecionamento Temporário (302)
+              </label>
+            </div>
+          </div>
+        </div>
+
         {shortenUrl && (
           <>
             <label className="text-white w-full text-left text-sm">
