@@ -4,18 +4,21 @@ export function useToast() {
   function showSuccessToast(message: string, description?: string) {
     toast.success(message, {
       description,
+      position:"top-right",
     })
   }
 
   function showErrorToast(message: string, description?: string) {
     toast.error(message, {
       description,
+      position:"top-right",
     })
   }
 
   function showInfoToast(message: string, description?: string) {
     toast(message, {
       description,
+      position:"top-right",
     })
   }
 
@@ -27,6 +30,7 @@ export function useToast() {
   ) {
     toast(message, {
       description,
+
       action: {
         label: actionLabel,
         onClick,
